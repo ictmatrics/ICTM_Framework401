@@ -2,8 +2,10 @@
 // Core compile-time constants
 const APPKEY     = 'licensecodes';
 const SITENAME   = 'Site Name';
-const APPVERSION = '1.0.0';
-const FRAMEWORK  = 'ICTM Framework 4.0';
+const APPVERSION = '1.0.1';
+const FRAMEWORK  = 'ICTM Framework 4.0.1';
+const DOMAIN     = '';
+
 
 // Build runtime-dependent BASE_URL once
 $protocol = (
