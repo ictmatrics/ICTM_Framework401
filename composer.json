@@ -1,16 +1,14 @@
 {
     "name": "ictmatrics/ictm-framework401",
-    "description": "ICTM Framework 401 core components",
-    "type": "library",
+    "description": "ICTM Framework 401 root project template",
+    "type": "project",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "ICTMatrics Team",
-            "email": "info@ictmatrics.com"
-        }
-    ],
     "require": {
         "php": ">=8.1"
- 
+    },
+    "autoload": {
+        "psr-4": {
+            "ICTM\\Framework401\\": "src/"
+        }
     }
 }
