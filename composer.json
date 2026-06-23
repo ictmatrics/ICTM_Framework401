@@ -1,0 +1,16 @@
+{
+    "name": "ictmatrics/ictm-framework401",
+    "description": "ICTM Framework 401 core components",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ICTMatrics Team",
+            "email": "info@ictmatrics.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+ 
+    }
+}
