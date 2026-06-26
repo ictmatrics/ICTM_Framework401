@@ -23,7 +23,7 @@ $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $baseUrl = $protocol . $host . $scriptDir;
 
 // FIX 2: Standardize the trailing slash
-$baseUrl = rtrim($baseUrl, '/') . '/';
+$baseUrl = rtrim($baseUrl, '/') ;
 
 define('BASE_URL', $baseUrl);
 
