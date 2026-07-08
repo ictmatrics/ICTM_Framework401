@@ -1,13 +1,13 @@
 <?php
-$databe=''; // mysql or sqlite or blank for not using database
+$database=''; // mysql or sqlite or blank for not using database
 
 
 if($database='mysql')  {
-/*   define('DATABASE_TYPE', $database);
+  define('DATABASE_TYPE', $database);
   define('DB_HOST', 'localhost');
   define('DB_USER', 'root');
   define('DB_PASS', 'password');
-  define('DB_NAME', 'mydb'); */
+  define('DB_NAME', 'mydb');
 }
 elseif($database='sqlite')
 {
