@@ -38,13 +38,13 @@ function pathto(string $page): string
 {
     return BASE_URL . '/' . ltrim($page, '/');
 }
+
 /**
  * Render an <img> element safely.
  * image(src, alt,  width, height,class, style)
  * image('logo.png', 'Site Logo', 'img-fluid',  '200px', '100px');
  *  image('banner.jpg', 'Homepage Banner', 'border-radius:8px;', '100%', 'auto');
  * image('avatar.png', 'User Avatar'); // no width/height
-
  */
 function image(
     string $src,
@@ -54,8 +54,8 @@ function image(
     string $class = '',
     string $style = ''
 ): void {
-    $src   = htmlspecialchars($src, ENT_QUOTES, 'UTF-8');
-    $alt   = htmlspecialchars($alt, ENT_QUOTES, 'UTF-8');
+    $src = htmlspecialchars($src, ENT_QUOTES, 'UTF-8');
+    $alt = htmlspecialchars($alt, ENT_QUOTES, 'UTF-8');
     $class = htmlspecialchars($class, ENT_QUOTES, 'UTF-8');
     $style = htmlspecialchars($style, ENT_QUOTES, 'UTF-8');
 
@@ -70,17 +70,17 @@ function image(
             : null;
     };
 
-    $width  = $sanitizeDimension($width);
+    $width = $sanitizeDimension($width);
     $height = $sanitizeDimension($height);
 
     // Build attributes dynamically
     $attributes = [
         "src=\"$src\"",
-        $alt     !== ''   ? "alt=\"$alt\""       : null,
-        $class   !== ''   ? "class=\"$class\""   : null,
-        $style   !== ''   ? "style=\"$style\""   : null,
-        $width   !== null ? "width=\"$width\""   : null,
-        $height  !== null ? "height=\"$height\"" : null,
+        $alt !== '' ? "alt=\"$alt\"" : null,
+        $class !== '' ? "class=\"$class\"" : null,
+        $style !== '' ? "style=\"$style\"" : null,
+        $width !== null ? "width=\"$width\"" : null,
+        $height !== null ? "height=\"$height\"" : null,
     ];
 
     echo '<img ' . implode(' ', array_filter($attributes)) . '>';
@@ -91,7 +91,7 @@ function image(
  */
 function alert(string $message = ''): void
 {
-    echo "<script>alert(" . json_encode($message) . ");</script>";
+    echo '<script>alert(' . json_encode($message) . ');</script>';
 }
 
 /**
@@ -99,10 +99,10 @@ function alert(string $message = ''): void
  */
 function alertto(string $message = '', string $path = ''): void
 {
-    echo "<script>
-        alert(" . json_encode($message) . ");
-        location.href=" . json_encode($path) . ";
-    </script>";
+    echo '<script>
+        alert(' . json_encode($message) . ');
+        location.href=' . json_encode($path) . ';
+    </script>';
 }
 
 /**
@@ -110,10 +110,10 @@ function alertto(string $message = '', string $path = ''): void
  */
 function alerttoback(string $message = ''): void
 {
-    echo "<script>
-        alert(" . json_encode($message) . ");
+    echo '<script>
+        alert(' . json_encode($message) . ');
         history.back();
-    </script>";
+    </script>';
 }
 
 /**
@@ -121,13 +121,13 @@ function alerttoback(string $message = ''): void
  */
 function confirmto(string $message = '', string $path = '', string $returnpath = ''): void
 {
-    echo "<script>
-        if(confirm(" . json_encode($message) . ")) {
-            location.href=" . json_encode($path) . ";
+    echo '<script>
+        if(confirm(' . json_encode($message) . ')) {
+            location.href=' . json_encode($path) . ';
         } else {
-            location.href=" . json_encode($returnpath) . ";
+            location.href=' . json_encode($returnpath) . ';
         }
-    </script>";
+    </script>';
 }
 
 /**
@@ -135,10 +135,30 @@ function confirmto(string $message = '', string $path = '', string $returnpath =
  */
 function getUserIP(): string
 {
-    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        [$ip] = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        return trim($ip);
+    // Priority order of headers used by common load balancers/CDNs
+    $headers = [
+        'HTTP_CF_CONNECTING_IP',  // Cloudflare
+        'HTTP_X_REAL_IP',  // Nginx / general reverse proxy
+        'HTTP_CLIENT_IP',  // Some ISP proxies
+        'HTTP_X_FORWARDED_FOR'  // Standard multi-proxy header
+    ];
+
+    foreach ($headers as $header) {
+        if (!empty($_SERVER[$header])) {
+            // X-Forwarded-For can contain a comma-separated list (client, proxy1, proxy2)
+            $ips = explode(',', $_SERVER[$header]);
+
+            foreach ($ips as $ip) {
+                $ip = trim($ip);
+
+                // Filter out invalid IPs and local/private range IPs (127.0.0.1, 192.168.x.x, etc.)
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                    return $ip;
+                }
+            }
+        }
     }
 
+    // Fallback to the direct connection IP
     return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 }

@@ -1,102 +1,187 @@
-# ICTM Framework 4.0.1
+# ICTM Framework 4.5.1 (ICTM Framework 451)
 
-[](https://www.google.com/search?q=https://github.com/ictmatrics/ICTM_Framework401/releases)
-[](https://www.google.com/search?q=LICENSE)
-[](https://www.google.com/search?q=https://github.com/ictmatrics/ICTM_Framework401/actions)
+![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-blue.svg)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+![Architecture](https://img.shields.io/badge/Architecture-MVC-orange.svg)
 
-The **ICTM Framework (Information and Communication Technology Management & Metrics)** is a comprehensive, modular framework designed to help organizations assess, manage, and optimize their ICT infrastructure and governance processes. Version 4.0.1 introduces enhanced automation features, updated compliance matrices, and streamlined reporting modules.
+The **ICTM Framework** is a lightweight, high-performance PHP MVC (Model-View-Controller) framework designed for speed, simplicity, and flexibility. Unlike heavy frameworks bloated with unnecessary code, ICTM takes a minimalistic approach while offering essential modern web development features.
 
------
+---
 
-## 🚀 Key Features
+## 🚀 Features
 
-  * **Metric-Driven Governance:** Real-time tracking of ICT performance indicators.
-  * **Maturity Assessment:** Integrated tools to evaluate organizational ICT maturity levels based on global standards.
-  * **Automated Compliance:** Built-in checks for ISO/IEC 27001, COBIT, and ITIL alignment.
-  * **Scalable Architecture:** Designed for small businesses to large enterprises.
-  * **Extensible Plugins:** Support for custom modules to monitor proprietary hardware or software stacks.
+- **Lightweight MVC Architecture**: Clean separation of concerns across Models, Views, and Controllers.
+- **Modern PHP Support**: Built for PHP 8.2+ with strict typing (`declare(strict_types=1);`).
+- **Flexible Database Engine**: Native support for **MySQL** and **SQLite** via PDO.
+- **Custom Expressive Templating**: Simple template parsing syntax using `{{ $variable }}` and `{{ function_name() }}`.
+- **Powerful Helper Suite**: Built-in procedural helpers for Flash Messaging, HTML/URL generation, Data Sanitation, and Price Formatting.
+- **Clean Routing Engine**: Flexible URI routing supporting `GET`, `POST`, `ANY`, and dynamic parameter wildcards (`{id}`, `{slug}`).
+- **Built-in Security**: Automated XSS sanitization (`validate_data()`), prepared PDO statements against SQL Injection, and secure path isolation.
 
-## 📦 Installation
+---
 
-To use the ICTM Framework as a package in your project, follow the instructions for your environment:
-
-### Using GitHub Packages (NPM Example)
-
-Add the following to your `.npmrc` file:
+## 📂 Project Directory Structure
 
 ```text
-@ictmatrics:registry=https://npm.pkg.github.com
+├── APP/
+│   ├── Config/          # Configuration files (Routes, Autoload, Database, Constants)
+│   ├── Controllers/     # Controller classes handling request logic (App\Controllers)
+│   ├── Filters/         # Request middleware & execution filters
+│   ├── Helpers/         # Procedural utility functions (URL, Formatting, Flash)
+│   ├── Libraries/       # Custom & third-party classes (App\Libraries)
+│   ├── Models/          # Model classes handling DB operations (App\Models)
+│   ├── System/          # Core framework engine & base classes (System\Config)
+│   ├── Views/           # Application template views
+│   └── .env             # Environment configuration file (DB credentials, app keys)
+├── public_html/         # Public Web Root (accessible via web browser)
+│   ├── css/             # Stylesheets (style.css)
+│   ├── js/              # Client-side scripts (script.js)
+│   ├── images/          # Image assets
+│   ├── Writables/       # Upload & runtime writable storage
+│   └── index.php        # Front controller & app entry point
+├── Schema.sql           # Database schema & sample seed data
+├── composer.json        # Package & autoloader configuration
+├── composer.lock        # Locked dependency versions
+└── packages.json        # Framework package metadata
 ```
 
-Then install via:
+---
 
-```bash
-npm install @ictmatrics/ictm-framework@4.0.1
+## ⚙️ Requirements & Installation
+
+### Prerequisites
+- **PHP**: 8.3 or higher (8.5 recommended) with `PDO`, `pdo_mysql`, and `pdo_sqlite` extensions enabled.
+- **Web Server**: Apache (`mod_rewrite` enabled) or Nginx.
+- **Composer**: Dependency manager for PHP.
+
+### Setup Instructions
+
+1. **Clone or Extract the Repository**:
+   ```bash
+   git clone https://github.com/ictmatrics/ICTM_Framework401.git
+   cd ICTM_Framework401
+   ```
+
+2. **Install Dependencies**:
+   ```bash
+   composer install
+   ```
+
+3. **Configure Environment Variables**:
+   Copy `APP/env.example` to `APP/.env` and configure your database and app settings:
+   ```ini
+   APP_KEY="your-secret-key"
+   SITE_NAME="ICTM Products Portal"
+   APP_VERSION="1.0.1"
+
+   # Database Connection (mysql or sqlite)
+   DB_CONNECTION="sqlite"
+   DB_NAME="database.sqlite"
+   ```
+
+4. **Import Database Schema**:
+   For SQLite, initialize using `Schema.sql`:
+   ```bash
+   sqlite3 APP/Config/database.sqlite < Schema.sql
+   ```
+   Or import `Schema.sql` into your MySQL database server.
+
+5. **Run Local Development Server**:
+   Point your document root to `public_html/` or use PHP's built-in web server:
+   ```bash
+   php -S localhost:8000 -t public_html
+   ```
+
+---
+
+## 🛣️ Routing Syntax
+
+Routes are defined in `APP/Config/Route.php` using `$router`:
+
+```php
+// Basic Routes
+$router->get('/', 'HomeController@index');
+$router->get('/products', 'ProductController@index');
+
+// Form Actions
+$router->get('/products/create', 'ProductController@create');
+$router->post('/products/store', 'ProductController@store');
+
+// Dynamic Dynamic Parameters
+$router->get('/products/edit/{id}', 'ProductController@edit');
+$router->post('/products/update/{id}', 'ProductController@update');
+$router->post('/products/delete/{id}', 'ProductController@delete');
 ```
 
-### Using GitHub Packages (Maven Example)
+---
 
-Add the repository to your `pom.xml`:
+## 🎨 Controllers & Views
 
-```xml
-<repository>
-  <id>github</id>
-  <url>https://maven.pkg.github.com/ictmatrics/ICTM_Framework401</url>
-</repository>
+### Controller Example
+Controllers must extend `System\Config\Controller` and reside in `App\Controllers`:
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace App\Controllers;
+
+use System\Config\Controller;
+use App\Models\ProductModel;
+
+class ProductController extends Controller
+{
+    private ProductModel $productModel;
+
+    public function __construct()
+    {
+        $this->productModel = new ProductModel();
+    }
+
+    public function index()
+    {
+        $data['title'] = 'All Products';
+        $data['products'] = $this->productModel->getFeaturedProducts();
+
+        echo $this->view('products/index', $data);
+    }
+}
 ```
 
-## 🛠 Quick Start
+### View Example
+Views reside in `APP/Views/` and utilize standard PHP or double curly bracket output expressions `{{ $var }}`:
 
-1.  **Initialize the Framework:**
-
-    ```javascript
-    const { ICTMCore } = require('@ictmatrics/ictm-framework');
-
-    const app = new ICTMCore({
-        configPath: './ictm-config.json',
-        environment: 'production'
-    });
-
-    app.init();
-    ```
-
-2.  **Run an Assessment:**
-
-    ```javascript
-    const report = await app.generateMaturityReport();
-    console.log(`Current Score: ${report.score}`);
-    ```
-
-## 📂 Repository Structure
-
-```text
-├── APP/                # Detailed documentation and schemas
-├── src/                # Core framework source code
-├── tests/              # Unit and integration tests
-├── examples/           # Implementation examples for various industries
-├── .github/workflows/  # CI/CD pipelines
-└── README.md           # You are here
+```html
+<h1>{{ $title }}</h1>
+<div class="product-list">
+    <?php foreach ($products as $product) { ?>
+        <div class="product-card">
+            <h3><?php echo htmlspecialchars($product->name, ENT_QUOTES, 'UTF-8'); ?></h3>
+            <p>{{ format_price($product->price) }}</p>
+            <?php redirectto('products/edit/' . $product->id, 'Edit Product', 'btn btn-primary'); ?>
+        </div>
+    <?php } ?>
+</div>
 ```
 
-## 🤝 Contributing
+---
 
-We welcome contributions\! Please see our [CONTRIBUTING.md](https://www.google.com/search?q=CONTRIBUTING.md) for guidelines on how to submit pull requests and report issues.
+## 🛠️ Helpers Reference
 
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
+The framework autoloads core utility functions from `APP/Helpers/`:
 
-## 📄 License
+- **URL Helpers** (`url_helper.php`):
+  - `redirect(string $page)`: Safe browser redirection.
+  - `redirectto(string $page, string $text, string $class)`: Formatted anchor `<a href="..." class="...">` output.
+  - `pathto(string $page)`: Returns full absolute URL.
+- **Formatting Helpers** (`format_helper.php`):
+  - `validate_data(string $data)`: Strips tags & handles XSS sanitization.
+  - `format_price(float|int|string $price)`: Currency formatter based on settings.
+- **Flash Messages** (`flash_helper.php`):
+  - `flash(string $name, string $message, string $class)`: Session-based notification alerts.
 
-Distributed under the MIT License. See `LICENSE` for more information.
+---
 
-## ✉️ Contact
+## 📜 License
 
-Project Link: [https://github.com/ictmatrics/ICTM\_Framework401](https://www.google.com/search?q=https://github.com/ictmatrics/ICTM_Framework401)
-Email: support@ictmatrics.com
-
------
-
-*Developed and maintained by the ICT Matrics Team.*
+Distributed under the **MIT License**. See `LICENSE` for more information.

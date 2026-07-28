@@ -1,11 +1,12 @@
 <?php
-// Core compile-time constants
-const APPKEY     = 'licensecodes';
-const SITENAME   = 'Site Name';
-const APPVERSION = '1.0.1';
-const FRAMEWORK  = 'ICTM Framework 4.0.1';
-const DOMAIN     = '';
+// Core compile-time constants updated to use environmental variables with legacy fallbacks.
+require_once APPPATH . 'Helpers/env_helper.php';
 
+define('APPKEY', env('APP_KEY', 'licensecodes'));
+define('SITENAME', env('SITE_NAME', 'Site Name'));
+define('APPVERSION', env('APP_VERSION', '1.0.1'));
+define('FRAMEWORK', 'ICTM Framework 4.5.1');
+define('DOMAIN', env('DOMAIN', ''));
 
 // Build runtime-dependent BASE_URL once
 $protocol = (
@@ -23,13 +24,13 @@ $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $baseUrl = $protocol . $host . $scriptDir;
 
 // FIX 2: Standardize the trailing slash
-$baseUrl = rtrim($baseUrl, '/') ;
+$baseUrl = rtrim($baseUrl, '/');
 
 define('BASE_URL', $baseUrl);
 
-//Mailer setting
-  define('E_HOST', 'mail.domain.com');
-  define('E_MAIL', 'user@domain.com');
-  define('E_NAME', 'User');
-  define('E_PORT', '465');
-  define('E_PASS', 'password');
+// Mailer setting
+define('E_HOST', env('MAIL_HOST', 'mail.domain.com'));
+define('E_MAIL', env('MAIL_FROM_ADDRESS', 'user@domain.com'));
+define('E_NAME', env('MAIL_FROM_NAME', 'User'));
+define('E_PORT', env('MAIL_PORT', '465'));
+define('E_PASS', env('MAIL_PASSWORD', 'password'));

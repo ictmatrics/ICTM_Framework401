@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // Check PHP version
 $minPhpVersion = '8.1';
 if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {

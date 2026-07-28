@@ -21,6 +21,16 @@ const flash = (msg, type = 'info', delay = 3000) => {
 <a href="#" data-action="Action" data-p="URL" class="menu  btn btn-success">Page Name</a>
 */
 $(function () {
+  // Global CSRF Token Setup for jQuery AJAX
+  const csrfToken = $('meta[name="csrf-token"]').attr('content');
+  if (csrfToken) {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': csrfToken
+      }
+    });
+  }
+
   $('.menu').on('click', function (e) {
     e.preventDefault();
 
@@ -29,6 +39,10 @@ $(function () {
       method: 'POST',
       action: $el.data('p')
     });
+
+    if (csrfToken) {
+      form.append($('<input>', { type: 'hidden', name: '_csrf_token', value: csrfToken }));
+    }
 
     $.each($el.data(), (key, value) =>
       form.append($('<input>', { type: 'hidden', name: key, value }))
@@ -142,3 +156,13 @@ function closeModal(modalId) {
         modalInstance.hide();
     }
 }
+
+// Automatically fade out backend session flash messages in 3 seconds
+$(function () {
+    const $msgFlash = $('#msg-flash');
+    if ($msgFlash.length) {
+        $msgFlash.delay(3000).fadeOut(400, function () {
+            $(this).remove();
+        });
+    }
+});
