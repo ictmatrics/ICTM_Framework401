@@ -20,11 +20,4 @@
 
 $router->get('', 'HomeController@index');  
 
-// Products CRUD Reference Routes
-$router->get('/products', 'ProductController@index');
-$router->get('/products/create', 'ProductController@create');
-$router->post('/products/store', 'ProductController@store');
-$router->get('/products/edit/{id}', 'ProductController@edit');
-$router->post('/products/update/{id}', 'ProductController@update');
-$router->post('/products/delete/{id}', 'ProductController@delete');
-  
+
